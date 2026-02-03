@@ -113,7 +113,7 @@ npm run test:run
 npm run test:coverage
 ```
 
-Coverage thresholds are enforced in `vite.config.ts` (global 80% for lines/functions/branches/statements).
+Coverage thresholds are enforced in `vitest.config.ts` (global 80% for lines/functions/branches/statements).
 
 ## System Design and Structure
 
