@@ -1,0 +1,145 @@
+.deskTitle {
+  font-weight: 700;
+  min-height: 28px;
+}
+
+.deskCardTopRow {
+  align-items: flex-start;
+}
+
+.deskAdminCard {
+  position: relative;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 14px;
+  padding-right: 92px;
+  padding-bottom: 52px;
+}
+
+.deskBrowseCard {
+  position: relative;
+  padding-right: 92px;
+  padding-bottom: 52px;
+}
+
+.deskIdPill {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Admin: show Desk ID as a small secondary detail under the title */
+.deskAdminCard .deskIdPill {
+  font-size: 12px;
+  line-height: 1.25;
+  padding: 5px 10px;
+}
+
+.statusToggleInUse {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.14);
+}
+
+.statusToggleCorner {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  z-index: 10;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusToggleInUse.statusToggleCorner::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(251, 191, 36, 0.95);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.18);
+}
+
+.deskActionsButton {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 12;
+}
+
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.menuTray {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 60;
+  width: 180px;
+  padding: 8px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  transform: translateY(-42px);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px) saturate(1.12);
+  -webkit-backdrop-filter: blur(14px) saturate(1.12);
+  box-shadow: var(--shadow-modal);
+  display: grid;
+  gap: 8px;
+}
+
+:root[data-theme="dark"] .menuTray {
+  background: rgba(2, 6, 23, 0.74);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .menuTray {
+    background: rgba(2, 6, 23, 0.74);
+  }
+}
+
+.menuItem {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.statusToggle {
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--button-bg-secondary);
+}
+
+.statusToggleOn {
+  border-color: rgba(52, 211, 153, 0.45);
+  background: rgba(52, 211, 153, 0.12);
+}
+
+.card.cardBooked {
+  border-color: rgba(251, 191, 36, 0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(251, 191, 36, 0.1),
+    rgba(255, 255, 255, 0.04)
+  );
+}
+
+.card.cardBookedMine {
+  border-color: rgba(96, 165, 250, 0.55);
+  background: linear-gradient(
+    180deg,
+    rgba(96, 165, 250, 0.14),
+    rgba(255, 255, 255, 0.04)
+  );
+}

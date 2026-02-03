@@ -1,0 +1,24 @@
+input,
+select,
+textarea {
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--field-bg);
+  color: var(--text);
+  outline: none;
+}
+
+textarea {
+  height: auto;
+  min-height: 76px;
+  padding: 10px;
+  resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.75;
+}

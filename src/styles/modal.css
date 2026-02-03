@@ -1,0 +1,102 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(2, 6, 23, 0.44);
+  backdrop-filter: blur(9px) saturate(1.04);
+  -webkit-backdrop-filter: blur(9px) saturate(1.04);
+}
+
+.modal {
+  width: min(560px, 100%);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  box-shadow: var(--shadow-modal);
+  padding: 14px;
+}
+
+.modalWide {
+  width: min(760px, 100%);
+}
+
+.modalTitle {
+  font-weight: 750;
+  margin-bottom: 8px;
+}
+
+.modalBody {
+  color: var(--muted);
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.modalConstrained {
+  height: min(80vh, 760px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalBodyFlex {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollFade {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.scrollFadeScroller {
+  height: 100%;
+  overflow: auto;
+  padding: 10px;
+}
+
+.scrollFade::before,
+.scrollFade::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 18px;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 140ms ease;
+}
+
+.scrollFade::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--bg), rgba(0, 0, 0, 0));
+}
+
+.scrollFade::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--bg), rgba(0, 0, 0, 0));
+}
+
+.scrollFade[data-at-top="true"]::before {
+  opacity: 0;
+}
+
+.scrollFade[data-at-bottom="true"]::after {
+  opacity: 0;
+}

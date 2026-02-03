@@ -1,0 +1,116 @@
+button {
+  --btn-bg: var(--button-bg);
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    transform 80ms ease;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button:not(:disabled):not(.inlineButton):not(.menuOverlay):hover {
+  background:
+    linear-gradient(180deg, var(--tint-hover), var(--tint-hover)), var(--btn-bg);
+}
+
+button:not(:disabled):not(.inlineButton):not(.menuOverlay):active {
+  background:
+    linear-gradient(180deg, var(--tint-active), var(--tint-active)),
+    var(--btn-bg);
+  transform: translateY(1px);
+}
+
+button.primary {
+  --btn-bg: rgba(96, 165, 250, 0.16);
+  border-color: rgba(96, 165, 250, 0.45);
+}
+
+button.primary:not(:disabled):hover {
+  border-color: rgba(96, 165, 250, 0.62);
+}
+
+button.primary:not(:disabled):active {
+  border-color: rgba(96, 165, 250, 0.72);
+}
+
+button.secondary {
+  --btn-bg: var(--button-bg-secondary);
+}
+
+button.danger {
+  --btn-bg: rgba(251, 113, 133, 0.16);
+  border-color: rgba(251, 113, 133, 0.5);
+}
+
+button.danger:not(:disabled):hover {
+  border-color: rgba(251, 113, 133, 0.62);
+}
+
+button.danger:not(:disabled):active {
+  border-color: rgba(251, 113, 133, 0.72);
+}
+
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: var(--text);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.buttonContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconButton {
+  --btn-bg: var(--button-bg-secondary);
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+}
+
+.iconButtonSmall {
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+}
+
+.inlineButton {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(96, 165, 250, 0.95);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.inlineButton:hover {
+  text-decoration: underline;
+}
+
+.inlineButton:active {
+  opacity: 0.85;
+}

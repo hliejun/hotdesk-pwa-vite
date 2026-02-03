@@ -1,0 +1,56 @@
+.skeleton {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.05)
+  );
+  background-size: 240px 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.skeletonTitle {
+  height: 18px;
+  width: 42%;
+}
+
+.skeletonLine {
+  height: 12px;
+  width: 70%;
+}
+
+.skeletonBlock {
+  height: 110px;
+  width: 100%;
+  border-radius: 14px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(2, 6, 23, 0.04),
+      rgba(2, 6, 23, 0.09),
+      rgba(2, 6, 23, 0.04)
+    );
+  }
+}
+
+:root[data-theme="light"] .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(2, 6, 23, 0.04),
+    rgba(2, 6, 23, 0.09),
+    rgba(2, 6, 23, 0.04)
+  );
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -240px 0;
+  }
+  100% {
+    background-position: calc(100% + 240px) 0;
+  }
+}

@@ -1,0 +1,685 @@
+openapi: 3.0.3
+info:
+  title: Hot Desk Booking API (Proposed)
+  version: 1.0.0
+  description: |
+    This project currently runs as a frontend-only MVP with a "fake backend" implemented in-app
+    (`src/api/client.ts` + `src/api/db.ts`).
+
+    This OpenAPI file is a proposed HTTP API that mirrors the existing API client methods and
+    React hooks under `src/api/hooks/*`.
+servers:
+  - url: http://localhost:5173/api
+    description: Local development (example)
+
+tags:
+  - name: Snapshot
+  - name: Users
+  - name: Desks
+  - name: Bookings
+  - name: Faults
+  - name: Admin
+
+paths:
+  /snapshot:
+    get:
+      tags: [Snapshot]
+      summary: Get full data snapshot
+      operationId: getSnapshot
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DbSnapshotResponse"
+
+  /users:
+    get:
+      tags: [Users]
+      summary: List users
+      operationId: listUsers
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+
+  /desks:
+    get:
+      tags: [Desks]
+      summary: List desks
+      operationId: listDesks
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeskListResponse"
+
+  /bookings:
+    get:
+      tags: [Bookings]
+      summary: List bookings
+      operationId: listBookings
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingListResponse"
+
+    post:
+      tags: [Bookings]
+      summary: Create a booking
+      operationId: createBooking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookingInput"
+      responses:
+        "200":
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /bookings/{bookingId}/cancel:
+    post:
+      tags: [Bookings]
+      summary: Cancel a booking
+      operationId: cancelBooking
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CancelBookingInput"
+      responses:
+        "200":
+          description: Booking cancelled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /faults:
+    get:
+      tags: [Faults]
+      summary: List faults
+      operationId: listFaults
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FaultListResponse"
+
+    post:
+      tags: [Faults]
+      summary: Create a fault report
+      operationId: createFault
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFaultInput"
+      responses:
+        "200":
+          description: Fault created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FaultResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /faults/{faultId}/resolve:
+    post:
+      tags: [Faults, Admin]
+      summary: Resolve a fault (admin-only)
+      operationId: resolveFault
+      parameters:
+        - name: faultId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResolveFaultInput"
+      responses:
+        "200":
+          description: Fault resolved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FaultResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/desks/upsert:
+    post:
+      tags: [Admin, Desks]
+      summary: Create or update a desk
+      description: |
+        Mirrors `apiClient.upsertDesk()`.
+
+        - When `id` is provided, updates an existing desk.
+        - When `id` is omitted, creates a new desk.
+      operationId: upsertDesk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertDeskInput"
+      responses:
+        "200":
+          description: Desk upserted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeskResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/desks/{deskId}:
+    delete:
+      tags: [Admin, Desks]
+      summary: Delete a desk
+      operationId: deleteDesk
+      parameters:
+        - name: deskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Desk deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteDeskResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /admin/config:
+    put:
+      tags: [Admin]
+      summary: Update config
+      operationId: updateConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateConfigInput"
+      responses:
+        "200":
+          description: Config updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /admin/bookings/clear:
+    post:
+      tags: [Admin, Bookings]
+      summary: Clear all bookings (admin-only)
+      operationId: clearBookings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminUserInput"
+      responses:
+        "200":
+          description: Cleared
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClearResultResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /admin/issues/clear:
+    post:
+      tags: [Admin, Faults]
+      summary: Clear all faults/issues (admin-only)
+      operationId: clearIssues
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminUserInput"
+      responses:
+        "200":
+          description: Cleared
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClearResultResponse"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /reset:
+    post:
+      tags: [Admin]
+      summary: Reset database
+      description: Mirrors `apiClient.reset()`.
+      operationId: resetDb
+      responses:
+        "200":
+          description: Reset OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DbSnapshotResponse"
+
+components:
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Forbidden:
+      description: Not allowed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    Role:
+      type: string
+      enum: [EMPLOYEE, ADMIN]
+
+    BookingSlot:
+      type: string
+      enum: [MORNING, NOON, AFTERNOON, EVENING]
+
+    DeskStatus:
+      type: string
+      enum: [ACTIVE, INACTIVE]
+
+    BookingStatus:
+      type: string
+      enum: [ACTIVE, CANCELLED]
+
+    FaultStatus:
+      type: string
+      enum: [OPEN, RESOLVED]
+
+    Amenity:
+      type: string
+      enum: [MONITOR, WINDOW, ADJUSTABLE, PRIVATE, COMMUNAL]
+
+    User:
+      type: object
+      required: [id, name, role]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          $ref: "#/components/schemas/Role"
+
+    Desk:
+      type: object
+      required: [id, label, zone, status, amenities]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        zone:
+          type: string
+        status:
+          $ref: "#/components/schemas/DeskStatus"
+        amenities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Amenity"
+
+    Booking:
+      type: object
+      required: [id, deskId, userId, date, slot, status, createdAt]
+      properties:
+        id:
+          type: string
+        deskId:
+          type: string
+        userId:
+          type: string
+        actorUserId:
+          type: string
+          nullable: true
+          description: Optional auditing field for "book on behalf" flows.
+        date:
+          type: string
+          description: Date in YYYY-MM-DD.
+          example: "2026-02-02"
+        slot:
+          $ref: "#/components/schemas/BookingSlot"
+        status:
+          $ref: "#/components/schemas/BookingStatus"
+        createdAt:
+          type: string
+          format: date-time
+        details:
+          type: string
+          nullable: true
+        cancelledAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    Fault:
+      type: object
+      required: [id, deskId, reporterUserId, status, description, createdAt]
+      properties:
+        id:
+          type: string
+        deskId:
+          type: string
+        reporterUserId:
+          type: string
+        bookingId:
+          type: string
+          nullable: true
+        status:
+          $ref: "#/components/schemas/FaultStatus"
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        resolvedAt:
+          type: string
+          format: date-time
+          nullable: true
+        resolvedByUserId:
+          type: string
+          nullable: true
+
+    AppConfig:
+      type: object
+      required: [maxBookingsPerDay, zones]
+      properties:
+        maxBookingsPerDay:
+          type: integer
+          minimum: 1
+          maximum: 20
+        zones:
+          type: array
+          items:
+            type: string
+
+    DbV1:
+      type: object
+      required: [version, users, desks, bookings, faults, config]
+      properties:
+        version:
+          type: integer
+          enum: [1]
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        desks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Desk"
+        bookings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Booking"
+        faults:
+          type: array
+          items:
+            $ref: "#/components/schemas/Fault"
+        config:
+          $ref: "#/components/schemas/AppConfig"
+
+    DbSnapshotResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/DbV1"
+
+    UserListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+
+    DeskListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Desk"
+
+    BookingListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Booking"
+
+    FaultListResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Fault"
+
+    BookingResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Booking"
+
+    DeskResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Desk"
+
+    FaultResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/Fault"
+
+    DeleteDeskResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [deskId]
+          properties:
+            deskId:
+              type: string
+
+    ClearResultResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [cleared]
+          properties:
+            cleared:
+              type: integer
+              minimum: 0
+
+    AdminUserInput:
+      type: object
+      required: [userId]
+      properties:
+        userId:
+          type: string
+
+    CreateBookingInput:
+      type: object
+      required: [deskId, userId, date, slot]
+      properties:
+        deskId:
+          type: string
+        userId:
+          type: string
+          description: The target user receiving the booking.
+        actorUserId:
+          type: string
+          nullable: true
+          description: The user performing the action (optional; defaults to userId).
+        date:
+          type: string
+          description: Date in YYYY-MM-DD.
+        slot:
+          $ref: "#/components/schemas/BookingSlot"
+        details:
+          type: string
+          nullable: true
+
+    CancelBookingInput:
+      type: object
+      required: [userId]
+      properties:
+        userId:
+          type: string
+          description: User performing the cancel (owner or admin).
+
+    CreateFaultInput:
+      type: object
+      required: [deskId, reporterUserId, description]
+      properties:
+        deskId:
+          type: string
+        reporterUserId:
+          type: string
+        description:
+          type: string
+        bookingId:
+          type: string
+          nullable: true
+
+    ResolveFaultInput:
+      type: object
+      required: [userId]
+      properties:
+        userId:
+          type: string
+          description: Admin user performing the resolve.
+
+    UpsertDeskInput:
+      type: object
+      required: [label, zone, status]
+      properties:
+        id:
+          type: string
+          nullable: true
+        label:
+          type: string
+        zone:
+          type: string
+        status:
+          $ref: "#/components/schemas/DeskStatus"
+        amenities:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Amenity"
+
+    UpdateConfigInput:
+      type: object
+      required: [maxBookingsPerDay]
+      properties:
+        maxBookingsPerDay:
+          type: integer
+          minimum: 1
+          maximum: 20
+
+    ConfigResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: "#/components/schemas/AppConfig"
