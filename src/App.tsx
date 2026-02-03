@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppProvider } from "./store";
 import Layout from "./screens/Layout";
 import Home from "./screens/Home";
@@ -9,7 +9,7 @@ import Admin from "./screens/Admin";
 const App = () => {
   return (
     <AppProvider>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
@@ -24,7 +24,7 @@ const App = () => {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </AppProvider>
   );
 };
